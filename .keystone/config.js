@@ -33,7 +33,8 @@ var lists = {
     access: import_access.allowAll,
     fields: {
       name: (0, import_fields.text)({ isRequired: true }),
-      email: (0, import_fields.text)({ isRequired: true, isUnique: true }),
+      email: (0, import_fields.text)({ isRequired: true, isUnique: true, isIndexed: "unique" }),
+      password: password({ validation: { isRequired: true } }),
       posts: (0, import_fields.relationship)({
         ref: "Post.author",
         many: true
@@ -46,6 +47,7 @@ var lists = {
       title: (0, import_fields.text)({ isRequired: true }),
       description: (0, import_fields.text)({ isRequired: true }),
       body: (0, import_fields.text)({ isRequired: true }),
+      publishedDate: (0, import_fields.timestamp)(),
       // image: image({ storage: 'local' }),
       author: (0, import_fields.relationship)({
         ref: "User.posts",
@@ -56,11 +58,21 @@ var lists = {
           inlineEdit: { fields: ["name", "email"] },
           inlineCreate: { fields: ["name", "email"] }
         }
+      }),
+      status: (0, import_fields.select)({
+        options: [
+          { label: "Draft", value: "draft" },
+          { label: "Published", value: "published" }
+        ],
+        ui: {
+          displayMode: "segmented-control",
+          createView: { fieldMode: "hidden" }
+        }
       })
     },
     ui: {
       listView: {
-        initialColumns: ["title", "author"]
+        initialColumns: ["title", "status", "author", "publishedDate"]
       }
     }
   }),

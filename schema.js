@@ -5,6 +5,8 @@ import {
   text,
   image,
   relationship,
+  timestamp,
+  select
 } from '@keystone-6/core/fields';
 
 export const lists = {
@@ -12,7 +14,8 @@ export const lists = {
     access: allowAll,
     fields: {
       name: text({ isRequired: true }),
-      email: text({ isRequired: true, isUnique: true }),
+      email: text({ isRequired: true, isUnique: true, isIndexed: 'unique' }),
+      password: password({ validation: { isRequired: true } }),
       posts: relationship({
         ref: 'Post.author',
         many: true,
@@ -26,6 +29,7 @@ export const lists = {
       title: text({ isRequired: true }),
       description: text({ isRequired: true }),
       body: text({ isRequired: true }),
+      publishedDate: timestamp(),
       // image: image({ storage: 'local' }),
       author: relationship({
         ref: 'User.posts',
@@ -37,10 +41,20 @@ export const lists = {
           inlineCreate: { fields: ['name', 'email'] },
         },
       }),
+      status: select({
+        options: [
+          { label: 'Draft', value: 'draft' },
+          { label: 'Published', value: 'published' },
+        ],
+        ui: {
+          displayMode: 'segmented-control',
+          createView: { fieldMode: 'hidden' },
+        },
+      }),
     },
     ui: {
       listView: {
-        initialColumns: ['title', 'author'],
+        initialColumns: ['title', 'status', 'author', 'publishedDate'],
       },
     },
   }),
@@ -54,4 +68,3 @@ export const lists = {
     },
   })
 }
-
