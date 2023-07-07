@@ -5,12 +5,18 @@ type User {
   id: ID!
   name: String
   email: String
+  password: PasswordState
   posts(where: PostWhereInput! = {}, orderBy: [PostOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: PostWhereUniqueInput): [Post!]
   postsCount(where: PostWhereInput! = {}): Int
 }
 
+type PasswordState {
+  isSet: Boolean!
+}
+
 input UserWhereUniqueInput {
   id: ID
+  email: String
 }
 
 input UserWhereInput {
@@ -82,6 +88,7 @@ enum OrderDirection {
 input UserUpdateInput {
   name: String
   email: String
+  password: String
   posts: PostRelateToManyForUpdateInput
 }
 
@@ -100,6 +107,7 @@ input UserUpdateArgs {
 input UserCreateInput {
   name: String
   email: String
+  password: String
   posts: PostRelateToManyForCreateInput
 }
 
@@ -111,14 +119,18 @@ input PostRelateToManyForCreateInput {
 type Post {
   id: ID!
   title: String
-  description: String
-  body: String
+  intro: String
   publishedDate: DateTime
+  body: Post_body_Document
   author: User
   status: String
 }
 
 scalar DateTime @specifiedBy(url: "https://datatracker.ietf.org/doc/html/rfc3339#section-5.6")
+
+type Post_body_Document {
+  document(hydrateRelationships: Boolean! = false): JSON!
+}
 
 input PostWhereUniqueInput {
   id: ID
@@ -130,8 +142,7 @@ input PostWhereInput {
   NOT: [PostWhereInput!]
   id: IDFilter
   title: StringFilter
-  description: StringFilter
-  body: StringFilter
+  intro: StringFilter
   publishedDate: DateTimeNullableFilter
   author: UserWhereInput
   status: StringNullableFilter
@@ -165,17 +176,16 @@ input StringNullableFilter {
 input PostOrderByInput {
   id: OrderDirection
   title: OrderDirection
-  description: OrderDirection
-  body: OrderDirection
+  intro: OrderDirection
   publishedDate: OrderDirection
   status: OrderDirection
 }
 
 input PostUpdateInput {
   title: String
-  description: String
-  body: String
+  intro: String
   publishedDate: DateTime
+  body: JSON
   author: UserRelateToOneForUpdateInput
   status: String
 }
@@ -193,9 +203,9 @@ input PostUpdateArgs {
 
 input PostCreateInput {
   title: String
-  description: String
-  body: String
+  intro: String
   publishedDate: DateTime
+  body: JSON
   author: UserRelateToOneForCreateInput
   status: String
 }
@@ -274,6 +284,26 @@ type Mutation {
   updateSnippets(data: [SnippetUpdateArgs!]!): [Snippet]
   deleteSnippet(where: SnippetWhereUniqueInput!): Snippet
   deleteSnippets(where: [SnippetWhereUniqueInput!]!): [Snippet]
+  endSession: Boolean!
+  authenticateUserWithPassword(email: String!, password: String!): UserAuthenticationWithPasswordResult
+  createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
+}
+
+union UserAuthenticationWithPasswordResult = UserAuthenticationWithPasswordSuccess | UserAuthenticationWithPasswordFailure
+
+type UserAuthenticationWithPasswordSuccess {
+  sessionToken: String!
+  item: User!
+}
+
+type UserAuthenticationWithPasswordFailure {
+  message: String!
+}
+
+input CreateInitialUserInput {
+  name: String
+  email: String
+  password: String
 }
 
 type Query {
@@ -287,7 +317,10 @@ type Query {
   snippet(where: SnippetWhereUniqueInput!): Snippet
   snippetsCount(where: SnippetWhereInput! = {}): Int
   keystone: KeystoneMeta!
+  authenticatedItem: AuthenticatedItem
 }
+
+union AuthenticatedItem = User
 
 type KeystoneMeta {
   adminMeta: KeystoneAdminMeta!

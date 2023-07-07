@@ -6,8 +6,10 @@ import {
   image,
   relationship,
   timestamp,
-  select
+  password,
+  select,
 } from '@keystone-6/core/fields';
+import { document } from '@keystone-6/fields-document';
 
 export const lists = {
   User: list({
@@ -27,23 +29,39 @@ export const lists = {
     access: allowAll,
     fields: {
       title: text({ isRequired: true }),
-      description: text({ isRequired: true }),
-      body: text({ isRequired: true }),
+      intro: text({
+        isRequired: true,
+        ui: {
+          displayMode: 'textarea',
+        },
+      }),
       publishedDate: timestamp(),
       // image: image({ storage: 'local' }),
+      // Add document field here
+      body: document({
+        formatting: true,
+        links: true,
+        dividers: true,
+        layouts: [
+          [1, 1],
+          [1, 1, 1],
+          [2, 1],
+          [1, 2],
+          [1, 1, 1, 1],
+        ],
+      }),
       author: relationship({
         ref: 'User.posts',
         ui: {
           displayMode: 'cards',
           cardFields: ['name', 'email'],
           linkToItem: true,
-          inlineEdit: { fields: ['name', 'email'] },
-          inlineCreate: { fields: ['name', 'email'] },
+          inlineConnect: true,
         },
       }),
       status: select({
         options: [
-          { label: 'Draft', value: 'draft' },
+          { label: 'Draft', value: 'draft', isDefault: true },
           { label: 'Published', value: 'published' },
         ],
         ui: {
