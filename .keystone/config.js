@@ -1,6 +1,8 @@
+var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __export = (target, all) => {
   for (var name in all)
@@ -14,6 +16,14 @@ var __copyProps = (to, from, except, desc) => {
   }
   return to;
 };
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // keystone.js
@@ -29,6 +39,46 @@ var import_access = require("@keystone-6/core/access");
 var import_core = require("@keystone-6/core");
 var import_fields = require("@keystone-6/core/fields");
 var import_fields_document = require("@keystone-6/fields-document");
+
+// component-blocks/component-blocks.jsx
+var import_react = __toESM(require("react"));
+var import_component_blocks = require("@keystone-6/fields-document/component-blocks");
+
+// ../deep-dives-fe/shared-components/quote.module.css
+var _default = {};
+
+// ../deep-dives-fe/shared-components/quote.jsx
+var Quote = ({ attribution, content }) => {
+  let { quote_text, author, quote } = _default;
+  console.log(attribution);
+  return /* @__PURE__ */ React.createElement("figure", { className: quote }, /* @__PURE__ */ React.createElement("blockquote", { className: quote_text }, content), attribution && /* @__PURE__ */ React.createElement("figcaption", { className: author }, attribution));
+};
+var quote_default = Quote;
+
+// component-blocks/component-blocks.jsx
+var componentBlocks = {
+  quote: (0, import_component_blocks.component)({
+    preview: (props) => {
+      return /* @__PURE__ */ import_react.default.createElement(quote_default, { attribution: props.fields.attribution.element, content: props.fields.content.element });
+    },
+    label: "Quote",
+    schema: {
+      content: import_component_blocks.fields.child({
+        kind: "block",
+        placeholder: "Quote...",
+        formatting: { inlineMarks: "inherit", softBreaks: "inherit" },
+        links: "inherit"
+      }),
+      attribution: import_component_blocks.fields.child({
+        kind: "inline",
+        placeholder: "\u2014 Attribution"
+      })
+    },
+    chromeless: true
+  })
+};
+
+// schema.js
 var lists = {
   User: (0, import_core.list)({
     access: import_access.allowAll,
@@ -65,7 +115,11 @@ var lists = {
           [2, 1],
           [1, 2],
           [1, 1, 1, 1]
-        ]
+        ],
+        ui: {
+          views: "./component-blocks/component-blocks"
+        },
+        componentBlocks
       }),
       author: (0, import_fields.relationship)({
         ref: "User.posts",

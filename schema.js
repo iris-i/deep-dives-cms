@@ -10,6 +10,9 @@ import {
   select,
 } from '@keystone-6/core/fields';
 import { document } from '@keystone-6/fields-document';
+// Component Blocks
+import { componentBlocks } from './component-blocks/component-blocks';
+
 
 export const lists = {
   User: list({
@@ -49,6 +52,10 @@ export const lists = {
           [1, 2],
           [1, 1, 1, 1],
         ],
+        ui: {
+          views: './component-blocks/component-blocks',
+        },
+        componentBlocks,
       }),
       author: relationship({
         ref: 'User.posts',
