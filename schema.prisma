@@ -20,21 +20,37 @@ model User {
 }
 
 model Post {
-  id            String    @id @default(cuid())
-  title         String    @default("")
-  intro         String    @default("")
+  id            String     @id @default(cuid())
+  title         String     @default("")
+  intro         String     @default("")
   publishedDate DateTime?
-  body          String    @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
-  author        User?     @relation("Post_author", fields: [authorId], references: [id])
-  authorId      String?   @map("author")
+  body          String     @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
+  author        User?      @relation("Post_author", fields: [authorId], references: [id])
+  authorId      String?    @map("author")
   status        String?
+  categories    Category[] @relation("Category_posts")
 
   @@index([authorId])
 }
 
 model Snippet {
-  id          String @id @default(cuid())
-  title       String @default("")
-  description String @default("")
-  body        String @default("")
+  id          String     @id @default(cuid())
+  title       String     @default("")
+  description String     @default("")
+  body        String     @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
+  categories  Category[] @relation("Category_snippets")
+}
+
+model LearningJourney {
+  id         String     @id @default(cuid())
+  name       String     @default("")
+  categories Category[] @relation("Category_learningJourneys")
+}
+
+model Category {
+  id               String            @id @default(cuid())
+  name             String            @default("")
+  posts            Post[]            @relation("Category_posts")
+  snippets         Snippet[]         @relation("Category_snippets")
+  learningJourneys LearningJourney[] @relation("Category_learningJourneys")
 }

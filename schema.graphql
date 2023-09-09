@@ -124,6 +124,8 @@ type Post {
   body: Post_body_Document
   author: User
   status: String
+  categories(where: CategoryWhereInput! = {}, orderBy: [CategoryOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CategoryWhereUniqueInput): [Category!]
+  categoriesCount(where: CategoryWhereInput! = {}): Int
 }
 
 scalar DateTime @specifiedBy(url: "https://datatracker.ietf.org/doc/html/rfc3339#section-5.6")
@@ -146,6 +148,7 @@ input PostWhereInput {
   publishedDate: DateTimeNullableFilter
   author: UserWhereInput
   status: StringNullableFilter
+  categories: CategoryManyRelationFilter
 }
 
 input DateTimeNullableFilter {
@@ -173,6 +176,12 @@ input StringNullableFilter {
   not: StringNullableFilter
 }
 
+input CategoryManyRelationFilter {
+  every: CategoryWhereInput
+  some: CategoryWhereInput
+  none: CategoryWhereInput
+}
+
 input PostOrderByInput {
   id: OrderDirection
   title: OrderDirection
@@ -188,12 +197,20 @@ input PostUpdateInput {
   body: JSON
   author: UserRelateToOneForUpdateInput
   status: String
+  categories: CategoryRelateToManyForUpdateInput
 }
 
 input UserRelateToOneForUpdateInput {
   create: UserCreateInput
   connect: UserWhereUniqueInput
   disconnect: Boolean
+}
+
+input CategoryRelateToManyForUpdateInput {
+  disconnect: [CategoryWhereUniqueInput!]
+  set: [CategoryWhereUniqueInput!]
+  create: [CategoryCreateInput!]
+  connect: [CategoryWhereUniqueInput!]
 }
 
 input PostUpdateArgs {
@@ -208,6 +225,7 @@ input PostCreateInput {
   body: JSON
   author: UserRelateToOneForCreateInput
   status: String
+  categories: CategoryRelateToManyForCreateInput
 }
 
 input UserRelateToOneForCreateInput {
@@ -215,11 +233,22 @@ input UserRelateToOneForCreateInput {
   connect: UserWhereUniqueInput
 }
 
+input CategoryRelateToManyForCreateInput {
+  create: [CategoryCreateInput!]
+  connect: [CategoryWhereUniqueInput!]
+}
+
 type Snippet {
   id: ID!
   title: String
   description: String
-  body: String
+  body: Snippet_body_Document
+  categories(where: CategoryWhereInput! = {}, orderBy: [CategoryOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CategoryWhereUniqueInput): [Category!]
+  categoriesCount(where: CategoryWhereInput! = {}): Int
+}
+
+type Snippet_body_Document {
+  document(hydrateRelationships: Boolean! = false): JSON!
 }
 
 input SnippetWhereUniqueInput {
@@ -233,20 +262,20 @@ input SnippetWhereInput {
   id: IDFilter
   title: StringFilter
   description: StringFilter
-  body: StringFilter
+  categories: CategoryManyRelationFilter
 }
 
 input SnippetOrderByInput {
   id: OrderDirection
   title: OrderDirection
   description: OrderDirection
-  body: OrderDirection
 }
 
 input SnippetUpdateInput {
   title: String
   description: String
-  body: String
+  body: JSON
+  categories: CategoryRelateToManyForUpdateInput
 }
 
 input SnippetUpdateArgs {
@@ -257,7 +286,134 @@ input SnippetUpdateArgs {
 input SnippetCreateInput {
   title: String
   description: String
-  body: String
+  body: JSON
+  categories: CategoryRelateToManyForCreateInput
+}
+
+type LearningJourney {
+  id: ID!
+  name: String
+  categories(where: CategoryWhereInput! = {}, orderBy: [CategoryOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CategoryWhereUniqueInput): [Category!]
+  categoriesCount(where: CategoryWhereInput! = {}): Int
+}
+
+input LearningJourneyWhereUniqueInput {
+  id: ID
+}
+
+input LearningJourneyWhereInput {
+  AND: [LearningJourneyWhereInput!]
+  OR: [LearningJourneyWhereInput!]
+  NOT: [LearningJourneyWhereInput!]
+  id: IDFilter
+  name: StringFilter
+  categories: CategoryManyRelationFilter
+}
+
+input LearningJourneyOrderByInput {
+  id: OrderDirection
+  name: OrderDirection
+}
+
+input LearningJourneyUpdateInput {
+  name: String
+  categories: CategoryRelateToManyForUpdateInput
+}
+
+input LearningJourneyUpdateArgs {
+  where: LearningJourneyWhereUniqueInput!
+  data: LearningJourneyUpdateInput!
+}
+
+input LearningJourneyCreateInput {
+  name: String
+  categories: CategoryRelateToManyForCreateInput
+}
+
+type Category {
+  id: ID!
+  name: String
+  posts(where: PostWhereInput! = {}, orderBy: [PostOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: PostWhereUniqueInput): [Post!]
+  postsCount(where: PostWhereInput! = {}): Int
+  snippets(where: SnippetWhereInput! = {}, orderBy: [SnippetOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: SnippetWhereUniqueInput): [Snippet!]
+  snippetsCount(where: SnippetWhereInput! = {}): Int
+  learningJourneys(where: LearningJourneyWhereInput! = {}, orderBy: [LearningJourneyOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: LearningJourneyWhereUniqueInput): [LearningJourney!]
+  learningJourneysCount(where: LearningJourneyWhereInput! = {}): Int
+}
+
+input CategoryWhereUniqueInput {
+  id: ID
+}
+
+input CategoryWhereInput {
+  AND: [CategoryWhereInput!]
+  OR: [CategoryWhereInput!]
+  NOT: [CategoryWhereInput!]
+  id: IDFilter
+  name: StringFilter
+  posts: PostManyRelationFilter
+  snippets: SnippetManyRelationFilter
+  learningJourneys: LearningJourneyManyRelationFilter
+}
+
+input SnippetManyRelationFilter {
+  every: SnippetWhereInput
+  some: SnippetWhereInput
+  none: SnippetWhereInput
+}
+
+input LearningJourneyManyRelationFilter {
+  every: LearningJourneyWhereInput
+  some: LearningJourneyWhereInput
+  none: LearningJourneyWhereInput
+}
+
+input CategoryOrderByInput {
+  id: OrderDirection
+  name: OrderDirection
+}
+
+input CategoryUpdateInput {
+  name: String
+  posts: PostRelateToManyForUpdateInput
+  snippets: SnippetRelateToManyForUpdateInput
+  learningJourneys: LearningJourneyRelateToManyForUpdateInput
+}
+
+input SnippetRelateToManyForUpdateInput {
+  disconnect: [SnippetWhereUniqueInput!]
+  set: [SnippetWhereUniqueInput!]
+  create: [SnippetCreateInput!]
+  connect: [SnippetWhereUniqueInput!]
+}
+
+input LearningJourneyRelateToManyForUpdateInput {
+  disconnect: [LearningJourneyWhereUniqueInput!]
+  set: [LearningJourneyWhereUniqueInput!]
+  create: [LearningJourneyCreateInput!]
+  connect: [LearningJourneyWhereUniqueInput!]
+}
+
+input CategoryUpdateArgs {
+  where: CategoryWhereUniqueInput!
+  data: CategoryUpdateInput!
+}
+
+input CategoryCreateInput {
+  name: String
+  posts: PostRelateToManyForCreateInput
+  snippets: SnippetRelateToManyForCreateInput
+  learningJourneys: LearningJourneyRelateToManyForCreateInput
+}
+
+input SnippetRelateToManyForCreateInput {
+  create: [SnippetCreateInput!]
+  connect: [SnippetWhereUniqueInput!]
+}
+
+input LearningJourneyRelateToManyForCreateInput {
+  create: [LearningJourneyCreateInput!]
+  connect: [LearningJourneyWhereUniqueInput!]
 }
 
 """
@@ -284,6 +440,18 @@ type Mutation {
   updateSnippets(data: [SnippetUpdateArgs!]!): [Snippet]
   deleteSnippet(where: SnippetWhereUniqueInput!): Snippet
   deleteSnippets(where: [SnippetWhereUniqueInput!]!): [Snippet]
+  createLearningJourney(data: LearningJourneyCreateInput!): LearningJourney
+  createLearningJourneys(data: [LearningJourneyCreateInput!]!): [LearningJourney]
+  updateLearningJourney(where: LearningJourneyWhereUniqueInput!, data: LearningJourneyUpdateInput!): LearningJourney
+  updateLearningJourneys(data: [LearningJourneyUpdateArgs!]!): [LearningJourney]
+  deleteLearningJourney(where: LearningJourneyWhereUniqueInput!): LearningJourney
+  deleteLearningJourneys(where: [LearningJourneyWhereUniqueInput!]!): [LearningJourney]
+  createCategory(data: CategoryCreateInput!): Category
+  createCategories(data: [CategoryCreateInput!]!): [Category]
+  updateCategory(where: CategoryWhereUniqueInput!, data: CategoryUpdateInput!): Category
+  updateCategories(data: [CategoryUpdateArgs!]!): [Category]
+  deleteCategory(where: CategoryWhereUniqueInput!): Category
+  deleteCategories(where: [CategoryWhereUniqueInput!]!): [Category]
   endSession: Boolean!
   authenticateUserWithPassword(email: String!, password: String!): UserAuthenticationWithPasswordResult
   createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
@@ -316,6 +484,12 @@ type Query {
   snippets(where: SnippetWhereInput! = {}, orderBy: [SnippetOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: SnippetWhereUniqueInput): [Snippet!]
   snippet(where: SnippetWhereUniqueInput!): Snippet
   snippetsCount(where: SnippetWhereInput! = {}): Int
+  learningJourneys(where: LearningJourneyWhereInput! = {}, orderBy: [LearningJourneyOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: LearningJourneyWhereUniqueInput): [LearningJourney!]
+  learningJourney(where: LearningJourneyWhereUniqueInput!): LearningJourney
+  learningJourneysCount(where: LearningJourneyWhereInput! = {}): Int
+  categories(where: CategoryWhereInput! = {}, orderBy: [CategoryOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CategoryWhereUniqueInput): [Category!]
+  category(where: CategoryWhereUniqueInput!): Category
+  categoriesCount(where: CategoryWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }

@@ -35,10 +35,7 @@ module.exports = __toCommonJS(keystone_exports);
 var import_core2 = require("@keystone-6/core");
 
 // schema.js
-var import_access = require("@keystone-6/core/access");
 var import_core = require("@keystone-6/core");
-var import_fields = require("@keystone-6/core/fields");
-var import_fields_document = require("@keystone-6/fields-document");
 
 // component-blocks/component-blocks.jsx
 var import_react = __toESM(require("react"));
@@ -50,7 +47,6 @@ var _default = {};
 // ../deep-dives-fe/shared-components/quote.jsx
 var Quote = ({ attribution, content }) => {
   let { quote_text, author, quote } = _default;
-  console.log(attribution);
   return /* @__PURE__ */ React.createElement("figure", { className: quote }, /* @__PURE__ */ React.createElement("blockquote", { className: quote_text }, content), attribution && /* @__PURE__ */ React.createElement("figcaption", { className: author }, attribution));
 };
 var quote_default = Quote;
@@ -78,82 +74,189 @@ var componentBlocks = {
   })
 };
 
+// content-schema/postFields.js
+var import_fields = require("@keystone-6/core/fields");
+var import_access = require("@keystone-6/core/access");
+
+// content-schema/commonFields.js
+var import_fields_document = require("@keystone-6/fields-document");
+var documentField = (0, import_fields_document.document)({
+  formatting: true,
+  links: true,
+  dividers: true,
+  layouts: [
+    [1, 1],
+    [1, 1, 1],
+    [2, 1],
+    [1, 2],
+    [1, 1, 1, 1]
+  ],
+  ui: {
+    views: "./component-blocks/component-blocks"
+  },
+  componentBlocks
+});
+var categoriesUi = {
+  displayMode: "select",
+  cardFields: ["name"],
+  linkToItem: false,
+  inlineConnect: true
+};
+
+// content-schema/postFields.js
+var postFields_default = postFields = {
+  access: import_access.allowAll,
+  fields: {
+    title: (0, import_fields.text)({ isRequired: true }),
+    intro: (0, import_fields.text)({
+      isRequired: true,
+      ui: {
+        displayMode: "textarea"
+      }
+    }),
+    publishedDate: (0, import_fields.timestamp)(),
+    // image: image({ storage: 'local' }),
+    // Add document field here
+    body: documentField,
+    author: (0, import_fields.relationship)({
+      ref: "User.posts",
+      ui: {
+        displayMode: "cards",
+        cardFields: ["name", "email"],
+        linkToItem: true,
+        inlineConnect: true
+      }
+    }),
+    status: (0, import_fields.select)({
+      options: [
+        { label: "Draft", value: "draft", isDefault: true },
+        { label: "Published", value: "published" }
+      ],
+      ui: {
+        displayMode: "segmented-control",
+        createView: { fieldMode: "hidden" }
+      }
+    }),
+    categories: (0, import_fields.relationship)({
+      ref: "Category.posts",
+      many: true
+    })
+  },
+  ui: {
+    listView: {
+      initialColumns: ["title", "status", "author", "publishedDate"]
+    }
+  }
+};
+
+// content-schema/userFields.js
+var import_access2 = require("@keystone-6/core/access");
+var import_fields2 = require("@keystone-6/core/fields");
+var userFields_default = userFields = {
+  access: import_access2.allowAll,
+  fields: {
+    name: (0, import_fields2.text)({ isRequired: true }),
+    email: (0, import_fields2.text)({ isRequired: true, isUnique: true, isIndexed: "unique" }),
+    password: (0, import_fields2.password)({ validation: { isRequired: true } }),
+    posts: (0, import_fields2.relationship)({
+      ref: "Post.author",
+      many: true
+    })
+  }
+};
+
+// content-schema/snippetFields.js
+var import_fields3 = require("@keystone-6/core/fields");
+var import_access3 = require("@keystone-6/core/access");
+var snippetFields_default = snippetFields = {
+  access: import_access3.allowAll,
+  fields: {
+    title: (0, import_fields3.text)({ isRequired: true }),
+    description: (0, import_fields3.text)({ isRequired: true }),
+    body: documentField,
+    categories: (0, import_fields3.relationship)({
+      ref: "Category.snippets",
+      many: true,
+      ui: categoriesUi
+    })
+  }
+};
+
+// content-schema/learningJourneyFields.js
+var import_access4 = require("@keystone-6/core/access");
+var import_fields4 = require("@keystone-6/core/fields");
+var learningJourneyFields_default = learningJourneyFields = {
+  access: import_access4.allowAll,
+  fields: {
+    name: (0, import_fields4.text)({ isRequired: true }),
+    categories: (0, import_fields4.relationship)({
+      ref: "Category.learningJourneys",
+      many: true,
+      ui: {
+        displayMode: "cards",
+        cardFields: ["name"],
+        linkToItem: false,
+        inlineConnect: true
+      }
+    })
+  }
+};
+
+// content-schema/categoryFields.js
+var import_access5 = require("@keystone-6/core/access");
+var import_fields5 = require("@keystone-6/core/fields");
+var categoryFields_default = categoryFields = {
+  access: import_access5.allowAll,
+  fields: {
+    name: (0, import_fields5.text)({ isRequired: true }),
+    posts: (0, import_fields5.relationship)({
+      ref: "Post.categories",
+      many: true
+    }),
+    snippets: (0, import_fields5.relationship)({
+      ref: "Snippet.categories",
+      many: true
+    }),
+    learningJourneys: (0, import_fields5.relationship)({
+      ref: "LearningJourney.categories",
+      many: true
+    })
+  }
+};
+
+// content-schema/index.js
+var userSchema = {
+  ...userFields_default
+};
+var postSchema = {
+  ...postFields_default
+};
+var snippetSchema = {
+  ...snippetFields_default
+};
+var learningJourneySchema = {
+  ...learningJourneyFields_default
+};
+var categorySchema = {
+  ...categoryFields_default
+};
+
 // schema.js
 var lists = {
   User: (0, import_core.list)({
-    access: import_access.allowAll,
-    fields: {
-      name: (0, import_fields.text)({ isRequired: true }),
-      email: (0, import_fields.text)({ isRequired: true, isUnique: true, isIndexed: "unique" }),
-      password: (0, import_fields.password)({ validation: { isRequired: true } }),
-      posts: (0, import_fields.relationship)({
-        ref: "Post.author",
-        many: true
-      })
-    }
+    ...userSchema
   }),
   Post: (0, import_core.list)({
-    access: import_access.allowAll,
-    fields: {
-      title: (0, import_fields.text)({ isRequired: true }),
-      intro: (0, import_fields.text)({
-        isRequired: true,
-        ui: {
-          displayMode: "textarea"
-        }
-      }),
-      publishedDate: (0, import_fields.timestamp)(),
-      // image: image({ storage: 'local' }),
-      // Add document field here
-      body: (0, import_fields_document.document)({
-        formatting: true,
-        links: true,
-        dividers: true,
-        layouts: [
-          [1, 1],
-          [1, 1, 1],
-          [2, 1],
-          [1, 2],
-          [1, 1, 1, 1]
-        ],
-        ui: {
-          views: "./component-blocks/component-blocks"
-        },
-        componentBlocks
-      }),
-      author: (0, import_fields.relationship)({
-        ref: "User.posts",
-        ui: {
-          displayMode: "cards",
-          cardFields: ["name", "email"],
-          linkToItem: true,
-          inlineConnect: true
-        }
-      }),
-      status: (0, import_fields.select)({
-        options: [
-          { label: "Draft", value: "draft", isDefault: true },
-          { label: "Published", value: "published" }
-        ],
-        ui: {
-          displayMode: "segmented-control",
-          createView: { fieldMode: "hidden" }
-        }
-      })
-    },
-    ui: {
-      listView: {
-        initialColumns: ["title", "status", "author", "publishedDate"]
-      }
-    }
+    ...postSchema
   }),
   Snippet: (0, import_core.list)({
-    access: import_access.allowAll,
-    fields: {
-      title: (0, import_fields.text)({ isRequired: true }),
-      description: (0, import_fields.text)({ isRequired: true }),
-      body: (0, import_fields.text)({ isRequired: true })
-    }
+    ...snippetSchema
+  }),
+  LearningJourney: (0, import_core.list)({
+    ...learningJourneySchema
+  }),
+  Category: (0, import_core.list)({
+    ...categorySchema
   })
 };
 
