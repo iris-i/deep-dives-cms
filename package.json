@@ -3,6 +3,14 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "build": "keystone build",
+    "dev": "keystone dev",
+    "postinstall": "keystone postinstall",
+    "generate": "keystone prisma migrate dev",
+    "start": "keystone start --with-migrations",
+    "deploy": "keystone build && keystone prisma migrate deploy"
+  },
   "dependencies": {
     "@keystone-6/auth": "^7.0.1",
     "@keystone-6/core": "^5.3.2",
