@@ -140,6 +140,9 @@ var postFields_default = postFields = {
     categories: (0, import_fields.relationship)({
       ref: "Category.posts",
       many: true
+    }),
+    learningJourneys: (0, import_fields.relationship)({
+      ref: "LearningJourney.posts"
     })
   },
   ui: {
@@ -189,11 +192,16 @@ var learningJourneyFields_default = learningJourneyFields = {
   access: import_access4.allowAll,
   fields: {
     name: (0, import_fields4.text)({ isRequired: true }),
+    description: documentField,
+    posts: (0, import_fields4.relationship)({
+      ref: "Post.learningJourneys",
+      many: true
+    }),
     categories: (0, import_fields4.relationship)({
       ref: "Category.learningJourneys",
       many: true,
       ui: {
-        displayMode: "cards",
+        displayMode: "select",
         cardFields: ["name"],
         linkToItem: false,
         inlineConnect: true

@@ -126,6 +126,7 @@ type Post {
   status: String
   categories(where: CategoryWhereInput! = {}, orderBy: [CategoryOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CategoryWhereUniqueInput): [Category!]
   categoriesCount(where: CategoryWhereInput! = {}): Int
+  learningJourneys: LearningJourney
 }
 
 scalar DateTime @specifiedBy(url: "https://datatracker.ietf.org/doc/html/rfc3339#section-5.6")
@@ -149,6 +150,7 @@ input PostWhereInput {
   author: UserWhereInput
   status: StringNullableFilter
   categories: CategoryManyRelationFilter
+  learningJourneys: LearningJourneyWhereInput
 }
 
 input DateTimeNullableFilter {
@@ -198,6 +200,7 @@ input PostUpdateInput {
   author: UserRelateToOneForUpdateInput
   status: String
   categories: CategoryRelateToManyForUpdateInput
+  learningJourneys: LearningJourneyRelateToOneForUpdateInput
 }
 
 input UserRelateToOneForUpdateInput {
@@ -213,6 +216,12 @@ input CategoryRelateToManyForUpdateInput {
   connect: [CategoryWhereUniqueInput!]
 }
 
+input LearningJourneyRelateToOneForUpdateInput {
+  create: LearningJourneyCreateInput
+  connect: LearningJourneyWhereUniqueInput
+  disconnect: Boolean
+}
+
 input PostUpdateArgs {
   where: PostWhereUniqueInput!
   data: PostUpdateInput!
@@ -226,6 +235,7 @@ input PostCreateInput {
   author: UserRelateToOneForCreateInput
   status: String
   categories: CategoryRelateToManyForCreateInput
+  learningJourneys: LearningJourneyRelateToOneForCreateInput
 }
 
 input UserRelateToOneForCreateInput {
@@ -236,6 +246,11 @@ input UserRelateToOneForCreateInput {
 input CategoryRelateToManyForCreateInput {
   create: [CategoryCreateInput!]
   connect: [CategoryWhereUniqueInput!]
+}
+
+input LearningJourneyRelateToOneForCreateInput {
+  create: LearningJourneyCreateInput
+  connect: LearningJourneyWhereUniqueInput
 }
 
 type Snippet {
@@ -293,8 +308,15 @@ input SnippetCreateInput {
 type LearningJourney {
   id: ID!
   name: String
+  description: LearningJourney_description_Document
+  posts(where: PostWhereInput! = {}, orderBy: [PostOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: PostWhereUniqueInput): [Post!]
+  postsCount(where: PostWhereInput! = {}): Int
   categories(where: CategoryWhereInput! = {}, orderBy: [CategoryOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CategoryWhereUniqueInput): [Category!]
   categoriesCount(where: CategoryWhereInput! = {}): Int
+}
+
+type LearningJourney_description_Document {
+  document(hydrateRelationships: Boolean! = false): JSON!
 }
 
 input LearningJourneyWhereUniqueInput {
@@ -307,6 +329,7 @@ input LearningJourneyWhereInput {
   NOT: [LearningJourneyWhereInput!]
   id: IDFilter
   name: StringFilter
+  posts: PostManyRelationFilter
   categories: CategoryManyRelationFilter
 }
 
@@ -317,6 +340,8 @@ input LearningJourneyOrderByInput {
 
 input LearningJourneyUpdateInput {
   name: String
+  description: JSON
+  posts: PostRelateToManyForUpdateInput
   categories: CategoryRelateToManyForUpdateInput
 }
 
@@ -327,6 +352,8 @@ input LearningJourneyUpdateArgs {
 
 input LearningJourneyCreateInput {
   name: String
+  description: JSON
+  posts: PostRelateToManyForCreateInput
   categories: CategoryRelateToManyForCreateInput
 }
 

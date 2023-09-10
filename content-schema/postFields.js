@@ -48,6 +48,9 @@ export default postFields = {
       ref: 'Category.posts',
       many: true,
     }),
+    learningJourneys: relationship({
+      ref: 'LearningJourney.posts'
+    }),
   },
   ui: {
     listView: {
