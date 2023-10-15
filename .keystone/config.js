@@ -108,6 +108,7 @@ var postFields_default = postFields = {
   access: import_access.allowAll,
   fields: {
     title: (0, import_fields.text)({ isRequired: true }),
+    slug: (0, import_fields.text)({ isUnique: true, isIndexed: "unique" }),
     intro: (0, import_fields.text)({
       isRequired: true,
       ui: {
@@ -149,8 +150,38 @@ var postFields_default = postFields = {
     listView: {
       initialColumns: ["title", "status", "author", "publishedDate"]
     }
+  },
+  hooks: {
+    // Generate a slug based on the title
+    resolveInput: async ({ resolvedData, operation, inputData, context }) => {
+      if (operation === "create" && !inputData.slug) {
+        return {
+          ...resolvedData,
+          slug: resolvedData.title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "")
+        };
+      }
+      return resolvedData;
+    },
+    // Validate manually-entered slug to ensure that it follows the regex pattern above.
+    validateInput: async ({ resolvedData, addValidationError }) => {
+      if (resolvedData.slug && !isValidSlug(resolvedData.slug)) {
+        addValidationError("The slug must consist of lowercase letters and hyphens only and must not start or end with a hyphen.");
+      }
+    }
   }
 };
+function isValidSlug(slug) {
+  if (!slug) {
+    return false;
+  }
+  if (!/^[a-z0-9-]+$/.test(slug)) {
+    return false;
+  }
+  if (slug.startsWith("-") || slug.endsWith("-")) {
+    return false;
+  }
+  return true;
+}
 
 // content-schema/userFields.js
 var import_access2 = require("@keystone-6/core/access");

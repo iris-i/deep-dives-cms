@@ -119,6 +119,7 @@ input PostRelateToManyForCreateInput {
 type Post {
   id: ID!
   title: String
+  slug: String
   intro: String
   publishedDate: DateTime
   body: Post_body_Document
@@ -137,6 +138,7 @@ type Post_body_Document {
 
 input PostWhereUniqueInput {
   id: ID
+  slug: String
 }
 
 input PostWhereInput {
@@ -145,6 +147,7 @@ input PostWhereInput {
   NOT: [PostWhereInput!]
   id: IDFilter
   title: StringFilter
+  slug: StringFilter
   intro: StringFilter
   publishedDate: DateTimeNullableFilter
   author: UserWhereInput
@@ -187,6 +190,7 @@ input CategoryManyRelationFilter {
 input PostOrderByInput {
   id: OrderDirection
   title: OrderDirection
+  slug: OrderDirection
   intro: OrderDirection
   publishedDate: OrderDirection
   status: OrderDirection
@@ -194,6 +198,7 @@ input PostOrderByInput {
 
 input PostUpdateInput {
   title: String
+  slug: String
   intro: String
   publishedDate: DateTime
   body: JSON
@@ -229,6 +234,7 @@ input PostUpdateArgs {
 
 input PostCreateInput {
   title: String
+  slug: String
   intro: String
   publishedDate: DateTime
   body: JSON

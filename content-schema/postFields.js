@@ -15,6 +15,7 @@ export default postFields = {
   access: allowAll,
   fields: {
     title: text({ isRequired: true }),
+    slug: text({ isUnique: true, isIndexed: 'unique' }),
     intro: text({
       isRequired: true,
       ui: {
@@ -57,4 +58,44 @@ export default postFields = {
       initialColumns: ['title', 'status', 'author', 'publishedDate'],
     },
   },
+  hooks: {
+    // Generate a slug based on the title
+    resolveInput: async ({ resolvedData, operation, inputData, context }) => {
+      if ((operation === 'create') && !inputData.slug) {
+        return {
+          ...resolvedData,
+          slug: resolvedData.title
+            .toLowerCase()
+            .replace(/ /g, '-')
+            .replace(/[^\w-]+/g, ''),
+        };
+      }
+      return resolvedData;
+    },
+    // Validate manually-entered slug to ensure that it follows the regex pattern above.
+    validateInput: async ({ resolvedData, addValidationError }) => {
+      if (resolvedData.slug && !isValidSlug(resolvedData.slug)) {
+        addValidationError('The slug must consist of lowercase letters and hyphens only and must not start or end with a hyphen.');
+      }
+    },    
+  }
+}
+
+function isValidSlug(slug) {
+  // Check if the slug is not empty
+  if (!slug) {
+    return false;
+  }
+
+  // Check if the slug consists of lowercase letters and hyphens only
+  if (!/^[a-z0-9-]+$/.test(slug)) {
+    return false;
+  }
+
+  // Check if the slug does not start or end with a hyphen
+  if (slug.startsWith('-') || slug.endsWith('-')) {
+    return false;
+  }
+
+  return true;
 }
