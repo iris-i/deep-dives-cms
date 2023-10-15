@@ -262,6 +262,7 @@ input LearningJourneyRelateToOneForCreateInput {
 type Snippet {
   id: ID!
   title: String
+  slug: String
   description: String
   body: Snippet_body_Document
   categories(where: CategoryWhereInput! = {}, orderBy: [CategoryOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CategoryWhereUniqueInput): [Category!]
@@ -282,6 +283,7 @@ input SnippetWhereInput {
   NOT: [SnippetWhereInput!]
   id: IDFilter
   title: StringFilter
+  slug: StringFilter
   description: StringFilter
   categories: CategoryManyRelationFilter
 }
@@ -289,11 +291,13 @@ input SnippetWhereInput {
 input SnippetOrderByInput {
   id: OrderDirection
   title: OrderDirection
+  slug: OrderDirection
   description: OrderDirection
 }
 
 input SnippetUpdateInput {
   title: String
+  slug: String
   description: String
   body: JSON
   categories: CategoryRelateToManyForUpdateInput
@@ -306,6 +310,7 @@ input SnippetUpdateArgs {
 
 input SnippetCreateInput {
   title: String
+  slug: String
   description: String
   body: JSON
   categories: CategoryRelateToManyForCreateInput

@@ -9,6 +9,7 @@ import {
 
 import { allowAll } from '@keystone-6/core/access';
 import { documentField, categoriesUi } from './commonFields';
+import { slugifyTitle, validationError } from '../utils/slugUtils';
 
 
 export default postFields = {
@@ -61,41 +62,12 @@ export default postFields = {
   hooks: {
     // Generate a slug based on the title
     resolveInput: async ({ resolvedData, operation, inputData, context }) => {
-      if ((operation === 'create') && !inputData.slug) {
-        return {
-          ...resolvedData,
-          slug: resolvedData.title
-            .toLowerCase()
-            .replace(/ /g, '-')
-            .replace(/[^\w-]+/g, ''),
-        };
-      }
-      return resolvedData;
+      return slugifyTitle(resolvedData, inputData, operation);
     },
     // Validate manually-entered slug to ensure that it follows the regex pattern above.
     validateInput: async ({ resolvedData, addValidationError }) => {
-      if (resolvedData.slug && !isValidSlug(resolvedData.slug)) {
-        addValidationError('The slug must consist of lowercase letters and hyphens only and must not start or end with a hyphen.');
-      }
-    },    
+      validationError(resolvedData, addValidationError);
+    },
   }
 }
 
-function isValidSlug(slug) {
-  // Check if the slug is not empty
-  if (!slug) {
-    return false;
-  }
-
-  // Check if the slug consists of lowercase letters and hyphens only
-  if (!/^[a-z0-9-]+$/.test(slug)) {
-    return false;
-  }
-
-  // Check if the slug does not start or end with a hyphen
-  if (slug.startsWith('-') || slug.endsWith('-')) {
-    return false;
-  }
-
-  return true;
-}

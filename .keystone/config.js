@@ -103,6 +103,34 @@ var categoriesUi = {
   inlineConnect: true
 };
 
+// utils/slugUtils.js
+var slugifyTitle = (resolvedData, inputData, operation) => {
+  if (operation === "create" && !inputData.slug) {
+    return {
+      ...resolvedData,
+      slug: resolvedData.title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "")
+    };
+  }
+  return resolvedData;
+};
+function isValidSlug(slug) {
+  if (!slug) {
+    return false;
+  }
+  if (!/^[a-z0-9-]+$/.test(slug)) {
+    return false;
+  }
+  if (slug.startsWith("-") || slug.endsWith("-")) {
+    return false;
+  }
+  return true;
+}
+async function validationError(resolvedData, addValidationError) {
+  if (resolvedData.slug && !isValidSlug(resolvedData.slug)) {
+    addValidationError("The slug must consist of lowercase letters and hyphens only and must not start or end with a hyphen.");
+  }
+}
+
 // content-schema/postFields.js
 var postFields_default = postFields = {
   access: import_access.allowAll,
@@ -154,34 +182,14 @@ var postFields_default = postFields = {
   hooks: {
     // Generate a slug based on the title
     resolveInput: async ({ resolvedData, operation, inputData, context }) => {
-      if (operation === "create" && !inputData.slug) {
-        return {
-          ...resolvedData,
-          slug: resolvedData.title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "")
-        };
-      }
-      return resolvedData;
+      return slugifyTitle(resolvedData, inputData, operation);
     },
     // Validate manually-entered slug to ensure that it follows the regex pattern above.
     validateInput: async ({ resolvedData, addValidationError }) => {
-      if (resolvedData.slug && !isValidSlug(resolvedData.slug)) {
-        addValidationError("The slug must consist of lowercase letters and hyphens only and must not start or end with a hyphen.");
-      }
+      validationError(resolvedData, addValidationError);
     }
   }
 };
-function isValidSlug(slug) {
-  if (!slug) {
-    return false;
-  }
-  if (!/^[a-z0-9-]+$/.test(slug)) {
-    return false;
-  }
-  if (slug.startsWith("-") || slug.endsWith("-")) {
-    return false;
-  }
-  return true;
-}
 
 // content-schema/userFields.js
 var import_access2 = require("@keystone-6/core/access");
@@ -206,6 +214,7 @@ var snippetFields_default = snippetFields = {
   access: import_access3.allowAll,
   fields: {
     title: (0, import_fields3.text)({ isRequired: true }),
+    slug: (0, import_fields3.text)({ isUnique: true }),
     description: (0, import_fields3.text)({ isRequired: true }),
     body: documentField,
     categories: (0, import_fields3.relationship)({
@@ -213,6 +222,16 @@ var snippetFields_default = snippetFields = {
       many: true,
       ui: categoriesUi
     })
+  },
+  hooks: {
+    // Generate a slug based on the title
+    resolveInput: async ({ resolvedData, operation, inputData, context }) => {
+      return slugifyTitle(resolvedData, inputData, operation);
+    },
+    // Validate manually-entered slug to ensure that it follows the regex pattern above.
+    validateInput: async ({ resolvedData, addValidationError }) => {
+      validationError(resolvedData, addValidationError);
+    }
   }
 };
 
