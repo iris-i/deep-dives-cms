@@ -42,10 +42,10 @@ var import_core = require("@keystone-6/core");
 var import_react = __toESM(require("react"));
 var import_component_blocks = require("@keystone-6/fields-document/component-blocks");
 
-// ../deep-dives-fe/shared-components/quote.module.css
+// component-blocks/shared-components/quote.module.css
 var _default = {};
 
-// ../deep-dives-fe/shared-components/quote.jsx
+// component-blocks/shared-components/quote.jsx
 var Quote = ({ attribution, content }) => {
   let { quote_text, author, quote } = _default;
   return /* @__PURE__ */ React.createElement("figure", { className: quote }, /* @__PURE__ */ React.createElement("blockquote", { className: quote_text }, content), attribution && /* @__PURE__ */ React.createElement("figcaption", { className: author }, attribution));

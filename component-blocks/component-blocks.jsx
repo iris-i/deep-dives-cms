@@ -1,6 +1,6 @@
 import React from 'react';
 import { component, fields } from '@keystone-6/fields-document/component-blocks';
-import Quote from '../../deep-dives-fe/shared-components/quote'
+import Quote from './shared-components/quote'
 
 export const componentBlocks = {
   quote: component({
