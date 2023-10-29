@@ -38,3 +38,16 @@ export async function validationError( resolvedData, addValidationError ) {
     addValidationError('The slug must consist of lowercase letters and hyphens only and must not start or end with a hyphen.');
   }
 }
+
+// Hooks for rewriting the slug.
+// @todo break this up so more hooks can be added to the list.
+export const slugHooks = {
+  // Generate a slug based on the title
+  resolveInput: async ({ resolvedData, operation, inputData, context }) => {
+    return slugifyTitle(resolvedData, inputData, operation);
+  },
+  // Validate manually-entered slug to ensure that it follows the regex pattern above.
+  validateInput: async ({ resolvedData, addValidationError }) => {
+    validationError(resolvedData, addValidationError);
+  },
+}
