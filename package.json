@@ -8,7 +8,8 @@
     "dev": "export NODE_ENV=development && keystone dev",
     "postinstall": "keystone postinstall",
     "generate": "keystone prisma migrate dev",
-    "start": "keystone start --with-migrations",
+    "generateprod": "export NODE_ENV=production && keystone prisma migrate dev",
+    "start": "export NODE_ENV=production && keystone start --with-migrations",
     "deploy": "keystone build && keystone prisma migrate deploy"
   },
   "dependencies": {
