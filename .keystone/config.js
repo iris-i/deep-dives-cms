@@ -32,6 +32,7 @@ __export(keystone_exports, {
   default: () => keystone_default
 });
 module.exports = __toCommonJS(keystone_exports);
+var import_dotenv = __toESM(require("dotenv"));
 var import_core2 = require("@keystone-6/core");
 
 // schema.js
@@ -338,12 +339,13 @@ var session = (0, import_session.statelessSessions)({
 });
 
 // keystone.js
+import_dotenv.default.config({ path: `.env-${process.env.NODE_ENV}` });
 var keystone_default = (0, import_core2.config)(
   withAuth(
     {
       db: {
-        provider: "sqlite",
-        url: "file:./keystone.db"
+        provider: process.env.PROVIDER,
+        url: process.env.DATABASE_URL
       },
       lists,
       session,
