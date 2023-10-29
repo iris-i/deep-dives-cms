@@ -1,5 +1,6 @@
 import { allowAll } from '@keystone-6/core/access';
 import { documentField } from './commonFields';
+import { slugHooks } from '../utils/slugUtils';
 // Import more keystone fields here
 import {
   text,
@@ -11,6 +12,7 @@ export default learningJourneyFields = {
   access: allowAll,
   fields: {
     name: text({ isRequired: true }),
+    slug: text({ isUnique: true, isIndexed: 'unique' }),
     description: documentField,
     posts: relationship({
       ref: 'Post.learningJourneys',
@@ -26,5 +28,6 @@ export default learningJourneyFields = {
         inlineConnect: true,
       },
     }),
-  }
+  },
+  hooks: slugHooks
 }

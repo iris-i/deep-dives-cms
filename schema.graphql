@@ -265,6 +265,7 @@ type Snippet {
   slug: String
   description: String
   body: Snippet_body_Document
+  publishedDate: DateTime
   categories(where: CategoryWhereInput! = {}, orderBy: [CategoryOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CategoryWhereUniqueInput): [Category!]
   categoriesCount(where: CategoryWhereInput! = {}): Int
 }
@@ -275,6 +276,7 @@ type Snippet_body_Document {
 
 input SnippetWhereUniqueInput {
   id: ID
+  slug: String
 }
 
 input SnippetWhereInput {
@@ -285,6 +287,7 @@ input SnippetWhereInput {
   title: StringFilter
   slug: StringFilter
   description: StringFilter
+  publishedDate: DateTimeNullableFilter
   categories: CategoryManyRelationFilter
 }
 
@@ -293,6 +296,7 @@ input SnippetOrderByInput {
   title: OrderDirection
   slug: OrderDirection
   description: OrderDirection
+  publishedDate: OrderDirection
 }
 
 input SnippetUpdateInput {
@@ -300,6 +304,7 @@ input SnippetUpdateInput {
   slug: String
   description: String
   body: JSON
+  publishedDate: DateTime
   categories: CategoryRelateToManyForUpdateInput
 }
 
@@ -313,12 +318,14 @@ input SnippetCreateInput {
   slug: String
   description: String
   body: JSON
+  publishedDate: DateTime
   categories: CategoryRelateToManyForCreateInput
 }
 
 type LearningJourney {
   id: ID!
   name: String
+  slug: String
   description: LearningJourney_description_Document
   posts(where: PostWhereInput! = {}, orderBy: [PostOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: PostWhereUniqueInput): [Post!]
   postsCount(where: PostWhereInput! = {}): Int
@@ -332,6 +339,7 @@ type LearningJourney_description_Document {
 
 input LearningJourneyWhereUniqueInput {
   id: ID
+  slug: String
 }
 
 input LearningJourneyWhereInput {
@@ -340,6 +348,7 @@ input LearningJourneyWhereInput {
   NOT: [LearningJourneyWhereInput!]
   id: IDFilter
   name: StringFilter
+  slug: StringFilter
   posts: PostManyRelationFilter
   categories: CategoryManyRelationFilter
 }
@@ -347,10 +356,12 @@ input LearningJourneyWhereInput {
 input LearningJourneyOrderByInput {
   id: OrderDirection
   name: OrderDirection
+  slug: OrderDirection
 }
 
 input LearningJourneyUpdateInput {
   name: String
+  slug: String
   description: JSON
   posts: PostRelateToManyForUpdateInput
   categories: CategoryRelateToManyForUpdateInput
@@ -363,6 +374,7 @@ input LearningJourneyUpdateArgs {
 
 input LearningJourneyCreateInput {
   name: String
+  slug: String
   description: JSON
   posts: PostRelateToManyForCreateInput
   categories: CategoryRelateToManyForCreateInput
@@ -371,6 +383,7 @@ input LearningJourneyCreateInput {
 type Category {
   id: ID!
   name: String
+  slug: String
   posts(where: PostWhereInput! = {}, orderBy: [PostOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: PostWhereUniqueInput): [Post!]
   postsCount(where: PostWhereInput! = {}): Int
   snippets(where: SnippetWhereInput! = {}, orderBy: [SnippetOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: SnippetWhereUniqueInput): [Snippet!]
@@ -381,6 +394,7 @@ type Category {
 
 input CategoryWhereUniqueInput {
   id: ID
+  slug: String
 }
 
 input CategoryWhereInput {
@@ -389,6 +403,7 @@ input CategoryWhereInput {
   NOT: [CategoryWhereInput!]
   id: IDFilter
   name: StringFilter
+  slug: StringFilter
   posts: PostManyRelationFilter
   snippets: SnippetManyRelationFilter
   learningJourneys: LearningJourneyManyRelationFilter
@@ -409,10 +424,12 @@ input LearningJourneyManyRelationFilter {
 input CategoryOrderByInput {
   id: OrderDirection
   name: OrderDirection
+  slug: OrderDirection
 }
 
 input CategoryUpdateInput {
   name: String
+  slug: String
   posts: PostRelateToManyForUpdateInput
   snippets: SnippetRelateToManyForUpdateInput
   learningJourneys: LearningJourneyRelateToManyForUpdateInput
@@ -439,6 +456,7 @@ input CategoryUpdateArgs {
 
 input CategoryCreateInput {
   name: String
+  slug: String
   posts: PostRelateToManyForCreateInput
   snippets: SnippetRelateToManyForCreateInput
   learningJourneys: LearningJourneyRelateToManyForCreateInput

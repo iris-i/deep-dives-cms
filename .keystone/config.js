@@ -130,6 +130,16 @@ async function validationError(resolvedData, addValidationError) {
     addValidationError("The slug must consist of lowercase letters and hyphens only and must not start or end with a hyphen.");
   }
 }
+var slugHooks = {
+  // Generate a slug based on the title
+  resolveInput: async ({ resolvedData, operation, inputData, context }) => {
+    return slugifyTitle(resolvedData, inputData, operation);
+  },
+  // Validate manually-entered slug to ensure that it follows the regex pattern above.
+  validateInput: async ({ resolvedData, addValidationError }) => {
+    validationError(resolvedData, addValidationError);
+  }
+};
 
 // content-schema/postFields.js
 var postFields_default = postFields = {
@@ -179,16 +189,7 @@ var postFields_default = postFields = {
       initialColumns: ["title", "status", "author", "publishedDate"]
     }
   },
-  hooks: {
-    // Generate a slug based on the title
-    resolveInput: async ({ resolvedData, operation, inputData, context }) => {
-      return slugifyTitle(resolvedData, inputData, operation);
-    },
-    // Validate manually-entered slug to ensure that it follows the regex pattern above.
-    validateInput: async ({ resolvedData, addValidationError }) => {
-      validationError(resolvedData, addValidationError);
-    }
-  }
+  hooks: slugHooks
 };
 
 // content-schema/userFields.js
@@ -214,25 +215,17 @@ var snippetFields_default = snippetFields = {
   access: import_access3.allowAll,
   fields: {
     title: (0, import_fields3.text)({ isRequired: true }),
-    slug: (0, import_fields3.text)({ isUnique: true }),
+    slug: (0, import_fields3.text)({ isUnique: true, isIndexed: "unique" }),
     description: (0, import_fields3.text)({ isRequired: true }),
     body: documentField,
+    publishedDate: (0, import_fields3.timestamp)(),
     categories: (0, import_fields3.relationship)({
       ref: "Category.snippets",
       many: true,
       ui: categoriesUi
     })
   },
-  hooks: {
-    // Generate a slug based on the title
-    resolveInput: async ({ resolvedData, operation, inputData, context }) => {
-      return slugifyTitle(resolvedData, inputData, operation);
-    },
-    // Validate manually-entered slug to ensure that it follows the regex pattern above.
-    validateInput: async ({ resolvedData, addValidationError }) => {
-      validationError(resolvedData, addValidationError);
-    }
-  }
+  hooks: slugHooks
 };
 
 // content-schema/learningJourneyFields.js
@@ -242,6 +235,7 @@ var learningJourneyFields_default = learningJourneyFields = {
   access: import_access4.allowAll,
   fields: {
     name: (0, import_fields4.text)({ isRequired: true }),
+    slug: (0, import_fields4.text)({ isUnique: true, isIndexed: "unique" }),
     description: documentField,
     posts: (0, import_fields4.relationship)({
       ref: "Post.learningJourneys",
@@ -257,7 +251,8 @@ var learningJourneyFields_default = learningJourneyFields = {
         inlineConnect: true
       }
     })
-  }
+  },
+  hooks: slugHooks
 };
 
 // content-schema/categoryFields.js
@@ -267,6 +262,7 @@ var categoryFields_default = categoryFields = {
   access: import_access5.allowAll,
   fields: {
     name: (0, import_fields5.text)({ isRequired: true }),
+    slug: (0, import_fields5.text)({ isUnique: true, isIndexed: "unique" }),
     posts: (0, import_fields5.relationship)({
       ref: "Post.categories",
       many: true
@@ -280,6 +276,8 @@ var categoryFields_default = categoryFields = {
       many: true
     })
   }
+  // @tod not working, fix later.
+  // hooks: slugHooks
 };
 
 // content-schema/index.js

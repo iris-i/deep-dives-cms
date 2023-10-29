@@ -38,17 +38,19 @@ model Post {
 }
 
 model Snippet {
-  id          String     @id @default(cuid())
-  title       String     @default("")
-  slug        String     @default("")
-  description String     @default("")
-  body        String     @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
-  categories  Category[] @relation("Category_snippets")
+  id            String     @id @default(cuid())
+  title         String     @default("")
+  slug          String     @unique @default("")
+  description   String     @default("")
+  body          String     @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
+  publishedDate DateTime?
+  categories    Category[] @relation("Category_snippets")
 }
 
 model LearningJourney {
   id          String     @id @default(cuid())
   name        String     @default("")
+  slug        String     @unique @default("")
   description String     @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
   posts       Post[]     @relation("Post_learningJourneys")
   categories  Category[] @relation("Category_learningJourneys")
@@ -57,6 +59,7 @@ model LearningJourney {
 model Category {
   id               String            @id @default(cuid())
   name             String            @default("")
+  slug             String            @unique @default("")
   posts            Post[]            @relation("Category_posts")
   snippets         Snippet[]         @relation("Category_snippets")
   learningJourneys LearningJourney[] @relation("Category_learningJourneys")
