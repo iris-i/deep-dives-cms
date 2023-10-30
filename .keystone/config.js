@@ -32,7 +32,7 @@ __export(keystone_exports, {
   default: () => keystone_default
 });
 module.exports = __toCommonJS(keystone_exports);
-var import_dotenv = __toESM(require("dotenv"));
+var import_dotenv2 = __toESM(require("dotenv"));
 var import_core2 = require("@keystone-6/core");
 
 // schema.js
@@ -319,7 +319,9 @@ var lists = {
 
 // auth.js
 var import_auth = require("@keystone-6/auth");
+var import_dotenv = __toESM(require("dotenv"));
 var import_session = require("@keystone-6/core/session");
+import_dotenv.default.config({ path: `.env-${process.env.NODE_ENV}` });
 var { withAuth } = (0, import_auth.createAuth)({
   listKey: "User",
   identityField: "email",
@@ -331,7 +333,7 @@ var { withAuth } = (0, import_auth.createAuth)({
     // access: { create: true, read: true, update: true, delete: true, auth: true },
   }
 });
-var sessionSecret = "myverysecretsecretthatneedstobechangedandsuperlong";
+var sessionSecret = process.env.SESSION_SECRET;
 var sessionMaxAge = 60 * 60 * 24 * 30;
 var session = (0, import_session.statelessSessions)({
   maxAge: sessionMaxAge,
@@ -339,7 +341,7 @@ var session = (0, import_session.statelessSessions)({
 });
 
 // keystone.js
-import_dotenv.default.config({ path: `.env-${process.env.NODE_ENV}` });
+import_dotenv2.default.config({ path: `.env-${process.env.NODE_ENV}` });
 var keystone_default = (0, import_core2.config)(
   withAuth(
     {

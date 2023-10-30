@@ -1,4 +1,7 @@
 import { createAuth } from '@keystone-6/auth';
+import dotenv from 'dotenv';
+dotenv.config({ path: `.env-${process.env.NODE_ENV}` });
+
 import { statelessSessions } from '@keystone-6/core/session';
 
 const { withAuth } = createAuth({
@@ -13,7 +16,7 @@ const { withAuth } = createAuth({
   },
 })
 
-let sessionSecret = 'myverysecretsecretthatneedstobechangedandsuperlong';
+let sessionSecret = process.env.SESSION_SECRET;
 let sessionMaxAge = 60 * 60 * 24 * 30; // 30 days
 
 const session = statelessSessions({
